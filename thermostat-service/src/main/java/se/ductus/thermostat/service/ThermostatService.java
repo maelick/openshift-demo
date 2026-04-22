@@ -18,6 +18,7 @@ import se.ductus.thermostat.persistence.TemperatureSetpointRepository;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import io.quarkus.scheduler.Scheduled;
 
 @Singleton
@@ -39,8 +40,7 @@ public class ThermostatService {
         for (String temperatureSensor : temperatureSensors) {
             try {
                 this.getSetpoint(temperatureSensor);
-            }
-            catch (NotFoundException ignored) {
+            } catch (NotFoundException ignored) {
                 this.updateSetpoint(new TemperatureSetpoint(temperatureSensor, 0));
             }
         }
@@ -55,8 +55,7 @@ public class ThermostatService {
             try {
                 TemperatureSetpoint temperatureSetpoint = this.getSetpoint(temperatureSensor);
                 temperatureSetpoints.add(temperatureSetpoint);
-            }
-            catch (NotFoundException ignored) {
+            } catch (NotFoundException ignored) {
                 log.warn("setpoint not found for sensor {}", temperatureSensor);
             }
         }
@@ -73,7 +72,6 @@ public class ThermostatService {
                     temperatureSetpoint.celsius
             );
             temperatureSensorService.setHeating(url, new Heating(isTooCold));
-
         }
     }
 
