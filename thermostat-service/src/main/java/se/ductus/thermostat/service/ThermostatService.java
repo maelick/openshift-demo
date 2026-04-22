@@ -65,22 +65,14 @@ public class ThermostatService {
         for (TemperatureSetpoint temperatureSetpoint : temperatureSetpoints) {
             String url = String.format("http://%s:8080", temperatureSetpoint.temperatureSensorId);
             Temperature temperature = temperatureSensorService.getTemperature(url);
-            if (temperature.celsius < temperatureSetpoint.celsius) {
-                log.info("Setting sensor {} heating=true (temperature={}, setpoint={})",
-                        temperatureSetpoint.temperatureSensorId,
-                        temperature.celsius,
-                        temperatureSetpoint.celsius
-                );
-                temperatureSensorService.setHeating(url, new Heating(true));
-            }
-            if (temperatureSetpoint.celsius > temperature.celsius) {
-                log.info("Setting sensor {} heating=false (temperature={}, setpoint={})",
-                        temperatureSetpoint.temperatureSensorId,
-                        temperature.celsius,
-                        temperatureSetpoint.celsius
-                );
-                temperatureSensorService.setHeating(url, new Heating(false));
-            }
+            var isTooCold = temperature.celsius < temperatureSetpoint.celsius;
+            log.info("Setting sensor {} heating={} (temperature={}, setpoint={})",
+                    temperatureSetpoint.temperatureSensorId,
+                    isTooCold,
+                    temperature.celsius,
+                    temperatureSetpoint.celsius
+            );
+            temperatureSensorService.setHeating(url, new Heating(isTooCold));
 
         }
     }
