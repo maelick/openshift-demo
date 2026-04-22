@@ -16,8 +16,8 @@ import se.ductus.temperaturesensor.service.TemperatureSensorService;
 import se.ductus.thermostat.model.TemperatureSetpoint;
 import se.ductus.thermostat.persistence.TemperatureSetpointRepository;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import io.quarkus.scheduler.Scheduled;
 
@@ -38,9 +38,7 @@ public class ThermostatService {
 
     void onStart(@Observes StartupEvent ev) {
         for (String temperatureSensor : temperatureSensors) {
-            try {
-                this.getSetpoint(temperatureSensor);
-            } catch (NotFoundException ignored) {
+            if (this.getSetpoint(temperatureSensor).isEmpty()) {
                 this.updateSetpoint(new TemperatureSetpoint(temperatureSensor, 0));
             }
         }
@@ -48,31 +46,28 @@ public class ThermostatService {
 
     @Scheduled(every = "1s")
     synchronized void controlTemperature() {
-        log.info("Getting setpoints");
+        this.temperatureSensors.forEach(this::controlSensorTemperature);
+    }
 
-        List<TemperatureSetpoint> temperatureSetpoints = new ArrayList<>();
-        for (String temperatureSensor : temperatureSensors) {
-            try {
-                TemperatureSetpoint temperatureSetpoint = this.getSetpoint(temperatureSensor);
-                temperatureSetpoints.add(temperatureSetpoint);
-            } catch (NotFoundException ignored) {
-                log.warn("setpoint not found for sensor {}", temperatureSensor);
-            }
+    private void controlSensorTemperature(String sensorId) {
+        log.info("Getting temperature setpoint for sensor {}", sensorId);
+        var temperatureSetpoint = this.getSetpoint(sensorId);
+        if (temperatureSetpoint.isEmpty()) {
+            // This should normally never happen as long as there is a single thermostat service running
+            log.warn("Setpoint not found for sensor {}", sensorId);
+            return;
         }
 
-        log.info("Checking sensor temperatures");
-        for (TemperatureSetpoint temperatureSetpoint : temperatureSetpoints) {
-            String url = String.format("http://%s:8080", temperatureSetpoint.temperatureSensorId);
-            Temperature temperature = temperatureSensorService.getTemperature(url);
-            var isTooCold = temperature.celsius < temperatureSetpoint.celsius;
-            log.info("Setting sensor {} heating={} (temperature={}, setpoint={})",
-                    temperatureSetpoint.temperatureSensorId,
-                    isTooCold,
-                    temperature.celsius,
-                    temperatureSetpoint.celsius
-            );
-            temperatureSensorService.setHeating(url, new Heating(isTooCold));
-        }
+        String url = String.format("http://%s:8080", temperatureSetpoint.get().temperatureSensorId);
+        Temperature temperature = temperatureSensorService.getTemperature(url);
+        var isTooCold = temperature.celsius < temperatureSetpoint.get().celsius;
+        log.info("Setting sensor {} heating={} (temperature={}, setpoint={})",
+                temperatureSetpoint.get().temperatureSensorId,
+                isTooCold,
+                temperature.celsius,
+                temperatureSetpoint.get().celsius
+        );
+        temperatureSensorService.setHeating(url, new Heating(isTooCold));
     }
 
     public void updateSetpoint(TemperatureSetpoint temperatureSetpoint) {
@@ -82,7 +77,7 @@ public class ThermostatService {
         temperatureSetpointRepository.updateTemperatureSetpoint(temperatureSetpoint);
     }
 
-    public TemperatureSetpoint getSetpoint(String temperatureSensorId) throws NotFoundException {
+    public Optional<TemperatureSetpoint> getSetpoint(String temperatureSensorId) {
         return temperatureSetpointRepository.getTemperatureSetpoint(temperatureSensorId);
     }
 

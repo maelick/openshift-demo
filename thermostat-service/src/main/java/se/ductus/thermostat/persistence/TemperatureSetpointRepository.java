@@ -11,6 +11,7 @@ import se.ductus.thermostat.persistence.entity.TemperatureSetpointEntity;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationScoped
 public class TemperatureSetpointRepository {
@@ -31,15 +32,15 @@ public class TemperatureSetpointRepository {
         }
     }
 
-    public TemperatureSetpoint getTemperatureSetpoint(String temperatureSensorId) throws NotFoundException {
-        TemperatureSetpointEntity temperatureSetpointEntity = em.find(TemperatureSetpointEntity.class, temperatureSensorId);
+    public Optional<TemperatureSetpoint> getTemperatureSetpoint(String temperatureSensorId) throws NotFoundException {
+        var temperatureSetpointEntity = em.find(TemperatureSetpointEntity.class, temperatureSensorId);
         if (temperatureSetpointEntity == null) {
-            throw new NotFoundException();
+            return Optional.empty();
         }
-        return new TemperatureSetpoint(
+        return Optional.of(new TemperatureSetpoint(
                 temperatureSetpointEntity.temperatureSensorId,
                 temperatureSetpointEntity.celsius
-        );
+        ));
     }
 
     public List<TemperatureSetpoint> getTemperatureSetpoints() {

@@ -52,17 +52,15 @@ public class ThermostatResource {
     @GET
     @Path("/setpoint/{temperatureSensorId}")
     public TemperatureSetpointDto getThermostatTemperature(@PathParam("temperatureSensorId") String temperatureSensorId) {
-        try {
-            TemperatureSetpoint temperatureSetpoint = thermostatService.getSetpoint(temperatureSensorId);
-            return new TemperatureSetpointDto(
-                    temperatureSetpoint.temperatureSensorId,
-                    temperatureSetpoint.celsius
-            );
-        }
-        catch (NotFoundException e) {
+        var temperatureSetpoint = thermostatService.getSetpoint(temperatureSensorId);
+        if (temperatureSetpoint.isEmpty()) {
             throw new NotFoundException(String.format(
                     "temperature setpoint not found for the given temperature sensor: %s", temperatureSensorId
             ));
         }
+        return new TemperatureSetpointDto(
+                temperatureSetpoint.get().temperatureSensorId,
+                temperatureSetpoint.get().celsius
+        );
     }
 }
