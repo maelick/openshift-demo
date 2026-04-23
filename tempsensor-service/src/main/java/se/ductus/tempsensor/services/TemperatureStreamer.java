@@ -12,7 +12,7 @@ public class TemperatureStreamer {
     @Inject
     TemperatureService service;
 
-    @Scheduled(every = "${se.ductus.tempsensor.stream-interval:1s}", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
+    @Scheduled(every = "${se.ductus.tempsensor.temperature-stream-interval}", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
     void sendUpdate() {
         var event = this.service.readState();
         broker.send(event);
