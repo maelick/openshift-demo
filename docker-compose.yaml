@@ -27,7 +27,7 @@ services:
       MYSQL_DATABASE: thermostat
       MYSQL_USER: thermostat
       MYSQL_PASSWORD: Thermostat1!
-      TEMPERATURE_SENSORS: "temperature-sensor-spring-1,temperature-sensor-spring-2"
+      TEMPERATURE_SENSORS: "temperature-sensor-spring-1,temperature-sensor-spring-2,temperature-sensor-1"
       DEFAULT_TEMPERATURE_SENSOR: temperature-sensor-spring-1
 
   temperature-sensor-spring-1:
