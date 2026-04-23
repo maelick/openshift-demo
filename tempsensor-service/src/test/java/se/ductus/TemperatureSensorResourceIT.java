@@ -3,6 +3,6 @@ package se.ductus;
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 
 @QuarkusIntegrationTest
-class GreetingResourceIT extends GreetingResourceTest {
+class TemperatureSensorResourceIT extends TemperatureSensorResourceTest {
     // Execute the same tests but in packaged mode.
 }
