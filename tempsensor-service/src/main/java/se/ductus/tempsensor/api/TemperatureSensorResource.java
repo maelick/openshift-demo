@@ -31,7 +31,7 @@ public class TemperatureSensorResource {
                     .status(Response.Status.BAD_REQUEST)
                     .build();
         }
-        this.temperatureService.setHeating(true);
+        this.temperatureService.setHeating(request.heating());
         return Response
                 .status(Response.Status.NO_CONTENT)
                 .build();
