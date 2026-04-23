@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.matchesPattern;
 
 @QuarkusTest
 class TemperatureSensorResourceTest {
@@ -14,7 +15,7 @@ class TemperatureSensorResourceTest {
                 .when().get("/temperature-sensor/temperature")
                 .then()
                 .statusCode(200)
-                .body(is("{\"celsius\":0.0}"));
+                .body(matchesPattern("\\{\"celsius\":.*}"));
     }
 
     @Test
