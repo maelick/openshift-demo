@@ -14,7 +14,7 @@ spec:
     git:
       uri: https://github.com/jesperfrisk/openshift-demo.git
       ref: lab
-    contextDir: tempsensor-service-spring
+    contextDir: tempsensor-service
   strategy:
     type: Docker
     dockerStrategy:
