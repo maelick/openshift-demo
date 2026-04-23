@@ -2,6 +2,7 @@ package se.ductus.tempsensor.services;
 
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,43 +11,42 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @ApplicationScoped
 public class InMemoryTemperatureService implements TemperatureService {
-    public static final float DEFAULT_INCREMENT = .8f;
-    public static final float DEFAULT_DECREMENT = .4f;
-    public static final float MAX_TEMPERATURE = 35;
-    public static final float MIN_TEMPERATURE = -40;
-
     private static final Logger log = LoggerFactory.getLogger(InMemoryTemperatureService.class);
+
+    private final float increment;
+    private final float decrement;
+    private final float minTemperature;
+    private final float maxTemperature;
 
     private float currentTemperature;
     private boolean heating = false;
-    private final float increment;
-    private final float decrement;
-
     private final ReadWriteLock lock = new ReentrantReadWriteLock();
 
-    public InMemoryTemperatureService() {
-        this(DEFAULT_INCREMENT, DEFAULT_DECREMENT);
-    }
+    @Inject
+    public InMemoryTemperatureService(TemperatureServiceConfig config) {
+        this(config.increment(), config.decrement(), config.minimum(), config.maximum());
 
-    public InMemoryTemperatureService(float initialTemperature) {
-        this(initialTemperature, DEFAULT_INCREMENT, DEFAULT_DECREMENT);
-    }
-
-    public InMemoryTemperatureService(float increment, float decrement) {
-        this(0, increment, decrement);
-    }
-
-    public InMemoryTemperatureService(float initialTemperature, float increment, float decrement) {
-        if (increment <= 0) {
-            throw new IllegalArgumentException("Temperature increment must be positive");
+        if (config.randomInitialValue()) {
+            this.currentTemperature = this.randomTemperature();
+        } else {
+            this.currentTemperature = config.initial();
         }
-        if (decrement <= 0) {
-            throw new IllegalArgumentException("Temperature decrement must be positive");
+    }
+
+    public InMemoryTemperatureService(float increment, float decrement, float minTemperature, float maxTemperature, float initialValue) {
+        this(increment, decrement, minTemperature, maxTemperature);
+        this.currentTemperature = initialValue;
+    }
+
+    public InMemoryTemperatureService(float increment, float decrement, float minTemperature, float maxTemperature) {
+        if (minTemperature >= maxTemperature) {
+            throw new IllegalArgumentException("Minimum temperature must be less than maximum");
         }
 
-        this.currentTemperature = initialTemperature;
         this.increment = increment;
         this.decrement = decrement;
+        this.minTemperature = minTemperature;
+        this.maxTemperature = maxTemperature;
     }
 
     public float getCurrentTemperature() {
@@ -75,9 +75,9 @@ public class InMemoryTemperatureService implements TemperatureService {
         lock.lock();
         try {
             if (this.heating) {
-                this.currentTemperature = Math.min(this.currentTemperature + this.increment, MAX_TEMPERATURE);
+                this.currentTemperature = Math.min(this.currentTemperature + this.increment, this.maxTemperature);
             } else {
-                this.currentTemperature = Math.max(this.currentTemperature - this.decrement, MIN_TEMPERATURE);
+                this.currentTemperature = Math.max(this.currentTemperature - this.decrement, this.minTemperature);
             }
             log.atInfo()
                     .addKeyValue("celsius", this.currentTemperature)
@@ -85,5 +85,9 @@ public class InMemoryTemperatureService implements TemperatureService {
         } finally {
             lock.unlock();
         }
+    }
+
+    private float randomTemperature() {
+        return this.minTemperature + (float) (Math.random() * (this.maxTemperature - this.minTemperature));
     }
 }
