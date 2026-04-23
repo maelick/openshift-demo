@@ -1,4 +1,4 @@
-package se.ductus;
+package se.ductus.tempsensor.api;
 
 import io.quarkus.test.junit.QuarkusIntegrationTest;
 

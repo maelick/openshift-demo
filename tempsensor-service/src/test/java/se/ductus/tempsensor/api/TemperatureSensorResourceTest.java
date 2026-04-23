@@ -1,9 +1,7 @@
-package se.ductus;
+package se.ductus.tempsensor.api;
 
 import io.quarkus.test.junit.QuarkusTest;
-import jakarta.ws.rs.core.MediaType;
 import org.junit.jupiter.api.Test;
-import se.ductus.tempsensor.api.models.TemperatureResponse;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.CoreMatchers.is;
