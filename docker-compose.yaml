@@ -53,6 +53,13 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8083:8080"
+    environment:
+      TEMPERATURE_INCREMENT: 0.4
+      TEMPERATURE_DECREMENT: 0.2
+      MIN_TEMPERATURE: -42
+      MAX_TEMPERATURE: 42
+      INITIAL_TEMPERATURE: 21
+      RANDOM_INITIAL_TEMPERATURE: true
 
 volumes:
   mysql_data:
