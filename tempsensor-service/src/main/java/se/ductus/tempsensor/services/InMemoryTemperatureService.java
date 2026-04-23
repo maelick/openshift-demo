@@ -79,7 +79,9 @@ public class InMemoryTemperatureService implements TemperatureService {
             } else {
                 this.currentTemperature = Math.max(this.currentTemperature - this.decrement, MIN_TEMPERATURE);
             }
-            log.info("Temperature updated to {}°C", this.currentTemperature);
+            log.atInfo()
+                    .addKeyValue("celsius", this.currentTemperature)
+                    .log("Temperature updated");
         } finally {
             lock.unlock();
         }
