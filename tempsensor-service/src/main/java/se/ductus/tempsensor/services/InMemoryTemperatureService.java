@@ -5,7 +5,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import se.ductus.tempsensor.services.models.TemperatureSensorStateEvent;
 
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -49,6 +52,7 @@ public class InMemoryTemperatureService implements TemperatureService {
         this.maxTemperature = maxTemperature;
     }
 
+    @Override
     public float getCurrentTemperature() {
         var lock = this.lock.readLock();
         lock.lock();
@@ -59,6 +63,24 @@ public class InMemoryTemperatureService implements TemperatureService {
         }
     }
 
+    @Override
+    public TemperatureSensorStateEvent readState() {
+        var lock = this.lock.readLock();
+        lock.lock();
+        try {
+            var now = LocalDateTime.now();
+            return new TemperatureSensorStateEvent(
+                    "id-todo",
+                    this.currentTemperature,
+                    this.heating,
+                    now.toInstant(ZoneOffset.UTC)
+            );
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    @Override
     public void setHeating(boolean heating) {
         var lock = this.lock.writeLock();
         lock.lock();
