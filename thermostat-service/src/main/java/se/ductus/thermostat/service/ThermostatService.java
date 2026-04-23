@@ -50,23 +50,23 @@ public class ThermostatService {
     }
 
     private void controlSensorTemperature(String sensorId) {
-        log.info("Getting temperature setpoint for sensor {}", sensorId);
         var temperatureSetpoint = this.getSetpoint(sensorId);
         if (temperatureSetpoint.isEmpty()) {
             // This should normally never happen as long as there is a single thermostat service running
-            log.warn("Setpoint not found for sensor {}", sensorId);
+            log.atWarn()
+                    .addKeyValue("sensorId", sensorId)
+                    .log("Setpoint not found for sensor {}", sensorId);
             return;
         }
 
         String url = String.format("http://%s:8080", temperatureSetpoint.get().temperatureSensorId);
         Temperature temperature = temperatureSensorService.getTemperature(url);
         var isTooCold = temperature.celsius < temperatureSetpoint.get().celsius;
-        log.info("Setting sensor {} heating={} (temperature={}, setpoint={})",
-                temperatureSetpoint.get().temperatureSensorId,
-                isTooCold,
-                temperature.celsius,
-                temperatureSetpoint.get().celsius
-        );
+        log.atInfo()
+                .addKeyValue("setpoint", temperatureSetpoint.get())
+                .addKeyValue("heating", isTooCold)
+                .addKeyValue("temperature", temperature)
+                .log("Setting sensor heating");
         temperatureSensorService.setHeating(url, new Heating(isTooCold));
     }
 
@@ -78,6 +78,9 @@ public class ThermostatService {
     }
 
     public Optional<TemperatureSetpoint> getSetpoint(String temperatureSensorId) {
+        log.atDebug()
+                .addKeyValue("sensorId", temperatureSensorId)
+                .log("Getting temperature setpoint");
         return temperatureSetpointRepository.getTemperatureSetpoint(temperatureSensorId);
     }
 
