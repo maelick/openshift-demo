@@ -25,5 +25,17 @@ class TemperatureSensorResourceTest {
                 .when().put("/temperature-sensor/heating")
                 .then()
                 .statusCode(400);
+
+        given().contentType("application/json")
+                .body("\"not-a-json-object\"")
+                .when().put("/temperature-sensor/heating")
+                .then()
+                .statusCode(400);
+
+        given().contentType("application/json")
+                .body("{}")
+                .when().put("/temperature-sensor/heating")
+                .then()
+                .statusCode(204);
     }
 }
