@@ -11,7 +11,6 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.ductus.temperaturesensor.model.Heating;
-import se.ductus.temperaturesensor.model.Temperature;
 import se.ductus.temperaturesensor.service.TemperatureSensorService;
 import se.ductus.thermostat.model.TemperatureSetpoint;
 import se.ductus.thermostat.persistence.TemperatureSetpointRepository;
@@ -59,9 +58,9 @@ public class ThermostatService {
             return;
         }
 
-        String url = String.format("http://%s:8080", temperatureSetpoint.get().temperatureSensorId);
-        Temperature temperature = temperatureSensorService.getTemperature(url);
-        var isTooCold = temperature.celsius < temperatureSetpoint.get().celsius;
+        String url = String.format("http://%s:8080", temperatureSetpoint.get().temperatureSensorId());
+        var temperature = temperatureSensorService.getTemperature(url);
+        var isTooCold = temperature.celsius() < temperatureSetpoint.get().celsius();
         log.atInfo()
                 .addKeyValue("setpoint", temperatureSetpoint.get())
                 .addKeyValue("heating", isTooCold)
@@ -71,7 +70,7 @@ public class ThermostatService {
     }
 
     public void updateSetpoint(TemperatureSetpoint temperatureSetpoint) {
-        if (!temperatureSensors.contains(temperatureSetpoint.temperatureSensorId)) {
+        if (!temperatureSensors.contains(temperatureSetpoint.temperatureSensorId())) {
             throw new NotFoundException();
         }
         temperatureSetpointRepository.updateTemperatureSetpoint(temperatureSetpoint);

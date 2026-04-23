@@ -20,15 +20,15 @@ public class TemperatureSetpointRepository {
 
     @Transactional
     public void updateTemperatureSetpoint(TemperatureSetpoint temperatureSetpoint) {
-        TemperatureSetpointEntity foundSetpoint  = em.find(TemperatureSetpointEntity.class, temperatureSetpoint.temperatureSensorId);
+        TemperatureSetpointEntity foundSetpoint  = em.find(TemperatureSetpointEntity.class, temperatureSetpoint.temperatureSensorId());
         if (foundSetpoint == null) {
             TemperatureSetpointEntity temperatureSetpointEntity = new TemperatureSetpointEntity();
-            temperatureSetpointEntity.temperatureSensorId = temperatureSetpoint.temperatureSensorId;
-            temperatureSetpointEntity.celsius = temperatureSetpoint.celsius;
+            temperatureSetpointEntity.temperatureSensorId = temperatureSetpoint.temperatureSensorId();
+            temperatureSetpointEntity.celsius = temperatureSetpoint.celsius();
             em.persist(temperatureSetpointEntity);
         }
         else {
-            foundSetpoint.celsius = temperatureSetpoint.celsius;
+            foundSetpoint.celsius = temperatureSetpoint.celsius();
         }
     }
 

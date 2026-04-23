@@ -41,8 +41,8 @@ public class ThermostatResource {
         for (TemperatureSetpoint temperatureSetpoint : temperatureSetpoints) {
             temperatureSetpointDtos.add(
                     new TemperatureSetpointDto(
-                            temperatureSetpoint.temperatureSensorId,
-                            temperatureSetpoint.celsius
+                            temperatureSetpoint.temperatureSensorId(),
+                            temperatureSetpoint.celsius()
                     )
             );
         }
@@ -59,8 +59,8 @@ public class ThermostatResource {
             ));
         }
         return new TemperatureSetpointDto(
-                temperatureSetpoint.get().temperatureSensorId,
-                temperatureSetpoint.get().celsius
+                temperatureSetpoint.get().temperatureSensorId(),
+                temperatureSetpoint.get().celsius()
         );
     }
 }
