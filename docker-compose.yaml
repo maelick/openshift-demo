@@ -46,5 +46,13 @@ services:
     ports:
       - "8082:8080"
 
+  temperature-sensor-1:
+    container_name: temperature-sensor-1
+    build:
+      context: ./tempsensor-service/
+      dockerfile: Dockerfile
+    ports:
+      - "8083:8080"
+
 volumes:
   mysql_data:
