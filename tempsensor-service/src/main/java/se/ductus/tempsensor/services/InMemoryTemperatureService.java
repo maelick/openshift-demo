@@ -69,7 +69,7 @@ public class InMemoryTemperatureService implements TemperatureService {
         }
     }
 
-    @Scheduled(every = "1s", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
+    @Scheduled(every = "${se.ductus.tempsensor.temperature-update-interval:1s}", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
     void updateTemperature() {
         var lock = this.lock.writeLock();
         lock.lock();

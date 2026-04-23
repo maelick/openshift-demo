@@ -60,6 +60,7 @@ services:
       MAX_TEMPERATURE: 42
       INITIAL_TEMPERATURE: 21
       RANDOM_INITIAL_TEMPERATURE: true
+      TEMPERATURE_UPDATE_INTERVAL: 2s
 
 volumes:
   mysql_data:
