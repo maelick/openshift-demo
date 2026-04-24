@@ -2,12 +2,13 @@ package se.ductus.tempsensor.services;
 
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 
 @ApplicationScoped
 public class TemperatureStreamer {
     @Inject
-    TemperatureBroker broker;
+    Instance<TemperatureBroker> brokers;
 
     @Inject
     TemperatureService service;
@@ -15,6 +16,6 @@ public class TemperatureStreamer {
     @Scheduled(every = "${se.ductus.tempsensor.temperature-stream-interval}", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
     void sendUpdate() {
         var event = this.service.readState();
-        broker.send(event);
+        brokers.stream().forEach(broker -> broker.send(event));
     }
 }

@@ -1,7 +1,8 @@
 package se.ductus.tempsensor.services;
 
+import io.quarkus.arc.lookup.LookupUnlessProperty;
 import io.smallrye.reactive.messaging.rabbitmq.OutgoingRabbitMQMetadata;
-import org.eclipse.microprofile.config.inject.ConfigProperties;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.reactive.messaging.Channel;
 import org.eclipse.microprofile.reactive.messaging.Emitter;
@@ -11,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import se.ductus.tempsensor.services.models.TemperatureSensorStateEvent;
 
+@LookupUnlessProperty(name = "se.ductus.tempsensor.temperature-stream-interval", stringValue = "off")
+@ApplicationScoped
 public class AMQPTemperatureBroker implements TemperatureBroker {
     private static final Logger log = LoggerFactory.getLogger(AMQPTemperatureBroker.class);
 
