@@ -19,6 +19,18 @@ services:
       timeout: 20s
       retries: 30
 
+  rabbitmq:
+    container_name: rabbitmq
+    image: docker.io/library/rabbitmq:4.2-management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 1s
+      timeout: 30s
+      retries: 30
+
   thermostat:
     container_name: thermostat
     build:
@@ -74,6 +86,16 @@ services:
       INITIAL_TEMPERATURE: 21
       RANDOM_INITIAL_TEMPERATURE: true
       TEMPERATURE_UPDATE_INTERVAL: 2s
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/q/health" ]
+      interval: 1s
+      timeout: 10s
+      retries: 60
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
 
 volumes:
   mysql_data:
