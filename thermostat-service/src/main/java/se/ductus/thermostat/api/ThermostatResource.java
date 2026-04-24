@@ -6,7 +6,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import se.ductus.thermostat.api.dto.TemperatureSetpointDto;
 import se.ductus.thermostat.model.TemperatureSetpoint;
-import se.ductus.thermostat.service.ThermostatService;
+import se.ductus.thermostat.service.TemperatureSetpointService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,12 +16,12 @@ import java.util.List;
 public class ThermostatResource {
 
     @Inject
-    ThermostatService thermostatService;
+    TemperatureSetpointService setpointService;
 
     @PUT
     @Path("/setpoint")
     public Response setThermostatTemperature(TemperatureSetpointDto temperatureSetpointDto) {
-        thermostatService.updateSetpoint(
+        setpointService.updateSetpoint(
                 new se.ductus.thermostat.model.TemperatureSetpoint(
                         temperatureSetpointDto.temperatureSensorId,
                         temperatureSetpointDto.celsius
@@ -36,7 +36,7 @@ public class ThermostatResource {
     @GET
     @Path("/setpoint")
     public List<TemperatureSetpointDto> getThermostatTemperature() {
-        List<TemperatureSetpoint> temperatureSetpoints = thermostatService.getSetpoints();
+        List<TemperatureSetpoint> temperatureSetpoints = setpointService.getSetpoints();
         List<TemperatureSetpointDto> temperatureSetpointDtos = new ArrayList<>();
         for (TemperatureSetpoint temperatureSetpoint : temperatureSetpoints) {
             temperatureSetpointDtos.add(
@@ -52,7 +52,7 @@ public class ThermostatResource {
     @GET
     @Path("/setpoint/{temperatureSensorId}")
     public TemperatureSetpointDto getThermostatTemperature(@PathParam("temperatureSensorId") String temperatureSensorId) {
-        var temperatureSetpoint = thermostatService.getSetpoint(temperatureSensorId);
+        var temperatureSetpoint = setpointService.getSetpoint(temperatureSensorId);
         if (temperatureSetpoint.isEmpty()) {
             throw new NotFoundException(String.format(
                     "temperature setpoint not found for the given temperature sensor: %s", temperatureSensorId

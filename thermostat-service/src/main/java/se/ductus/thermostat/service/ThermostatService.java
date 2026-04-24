@@ -5,7 +5,6 @@ import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 
-import jakarta.ws.rs.NotFoundException;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.slf4j.Logger;
@@ -13,10 +12,8 @@ import org.slf4j.LoggerFactory;
 import se.ductus.temperaturesensor.model.Heating;
 import se.ductus.temperaturesensor.service.TemperatureSensorService;
 import se.ductus.thermostat.model.TemperatureSetpoint;
-import se.ductus.thermostat.persistence.TemperatureSetpointRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 import io.quarkus.scheduler.Scheduled;
 
@@ -25,7 +22,7 @@ public class ThermostatService {
     private static final Logger log = LoggerFactory.getLogger(ThermostatService.class);
 
     @Inject
-    TemperatureSetpointRepository temperatureSetpointRepository;
+    TemperatureSetpointService setpointService;
 
     @Inject
     @RestClient
@@ -37,8 +34,8 @@ public class ThermostatService {
 
     void onStart(@Observes StartupEvent ev) {
         for (String temperatureSensor : temperatureSensors) {
-            if (this.getSetpoint(temperatureSensor).isEmpty()) {
-                this.updateSetpoint(new TemperatureSetpoint(temperatureSensor, 0));
+            if (setpointService.getSetpoint(temperatureSensor).isEmpty()) {
+                this.setpointService.updateSetpoint(new TemperatureSetpoint(temperatureSensor, 0));
             }
         }
     }
@@ -49,7 +46,7 @@ public class ThermostatService {
     }
 
     private void controlSensorTemperature(String sensorId) {
-        var temperatureSetpoint = this.getSetpoint(sensorId);
+        var temperatureSetpoint = setpointService.getSetpoint(sensorId);
         if (temperatureSetpoint.isEmpty()) {
             // This should normally never happen as long as there is a single thermostat service running
             log.atWarn()
@@ -67,23 +64,5 @@ public class ThermostatService {
                 .addKeyValue("temperature", temperature)
                 .log("Setting sensor heating");
         temperatureSensorService.setHeating(url, new Heating(isTooCold));
-    }
-
-    public void updateSetpoint(TemperatureSetpoint temperatureSetpoint) {
-        if (!temperatureSensors.contains(temperatureSetpoint.temperatureSensorId())) {
-            throw new NotFoundException();
-        }
-        temperatureSetpointRepository.updateTemperatureSetpoint(temperatureSetpoint);
-    }
-
-    public Optional<TemperatureSetpoint> getSetpoint(String temperatureSensorId) {
-        log.atDebug()
-                .addKeyValue("sensorId", temperatureSensorId)
-                .log("Getting temperature setpoint");
-        return temperatureSetpointRepository.getTemperatureSetpoint(temperatureSensorId);
-    }
-
-    public List<TemperatureSetpoint> getSetpoints() {
-        return temperatureSetpointRepository.getTemperatureSetpoints();
     }
 }
