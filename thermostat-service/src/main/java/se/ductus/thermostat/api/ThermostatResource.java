@@ -6,7 +6,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import se.ductus.thermostat.api.dto.TemperatureSetpointDto;
 import se.ductus.thermostat.model.TemperatureSetpoint;
-import se.ductus.thermostat.service.TemperatureSetpointService;
+import se.ductus.thermostat.services.TemperatureSetpointService;
 
 import java.util.ArrayList;
 import java.util.List;

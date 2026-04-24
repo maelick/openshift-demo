@@ -1,4 +1,4 @@
-package se.ductus.thermostat.service;
+package se.ductus.thermostat.services;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
