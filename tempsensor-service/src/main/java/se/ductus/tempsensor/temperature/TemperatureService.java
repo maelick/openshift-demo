@@ -1,6 +1,6 @@
-package se.ductus.tempsensor.services;
+package se.ductus.tempsensor.temperature;
 
-import se.ductus.tempsensor.services.models.TemperatureSensorStateEvent;
+import se.ductus.tempsensor.temperature.models.TemperatureSensorStateEvent;
 
 public interface TemperatureService {
     float getCurrentTemperature();

@@ -1,4 +1,4 @@
-package se.ductus.tempsensor.services;
+package se.ductus.tempsensor.temperature;
 
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;

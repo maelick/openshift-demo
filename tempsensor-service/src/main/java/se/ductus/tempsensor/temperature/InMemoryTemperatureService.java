@@ -1,11 +1,11 @@
-package se.ductus.tempsensor.services;
+package se.ductus.tempsensor.temperature;
 
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.ductus.tempsensor.services.models.TemperatureSensorStateEvent;
+import se.ductus.tempsensor.temperature.models.TemperatureSensorStateEvent;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;

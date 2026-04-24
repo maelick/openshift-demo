@@ -1,4 +1,4 @@
-package se.ductus.tempsensor.services.models;
+package se.ductus.tempsensor.temperature.models;
 
 import java.time.Instant;
 

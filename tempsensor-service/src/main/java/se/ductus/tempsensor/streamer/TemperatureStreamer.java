@@ -1,14 +1,15 @@
-package se.ductus.tempsensor.services;
+package se.ductus.tempsensor.streamer;
 
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
+import se.ductus.tempsensor.temperature.TemperatureService;
 
 @ApplicationScoped
 public class TemperatureStreamer {
     @Inject
-    Instance<TemperatureBroker> brokers;
+    Instance<TemperatureEmitter> brokers;
 
     @Inject
     TemperatureService service;
