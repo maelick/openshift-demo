@@ -20,7 +20,6 @@ services:
       retries: 30
 
   rabbitmq:
-    container_name: rabbitmq
     image: docker.io/library/rabbitmq:4.2-management
     ports:
       - "5672:5672"
