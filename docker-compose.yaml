@@ -44,7 +44,8 @@ services:
       MYSQL_USER: thermostat
       MYSQL_PASSWORD: Thermostat1!
       TEMPERATURE_SENSORS: "temperature-sensor-spring-1,temperature-sensor-spring-2,temperature-sensor-1"
-      DEFAULT_TEMPERATURE_SENSOR: temperature-sensor-spring-1
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/q/health" ]
       interval: 1s
@@ -52,6 +53,27 @@ services:
       retries: 60
     depends_on:
       mysql:
+        condition: service_healthy
+
+  temperature-streamer:
+    container_name: temperature-streamer
+    build:
+      context: ./tempsensor-streamer/
+      dockerfile: Dockerfile
+    ports:
+      - "8090:8080"
+    environment:
+      TEMPERATURE_STREAM_INTERVAL: 1s
+      TEMPERATURE_SENSORS: "temperature-sensor-spring-1,temperature-sensor-spring-2"
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/q/health" ]
+      interval: 1s
+      timeout: 10s
+      retries: 60
+    depends_on:
+      rabbitmq:
         condition: service_healthy
 
   temperature-sensor-spring-1:
@@ -88,6 +110,7 @@ services:
       TEMPERATURE_STREAM_INTERVAL: 1s
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_PORT: 5672
+      TEMPERATURE_SENSOR_ID: temperature-sensor-1
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080/q/health" ]
       interval: 1s
