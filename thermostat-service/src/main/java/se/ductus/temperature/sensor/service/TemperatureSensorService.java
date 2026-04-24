@@ -1,12 +1,12 @@
-package se.ductus.temperaturesensor.service;
+package se.ductus.temperature.sensor.service;
 
 import io.quarkus.rest.client.reactive.Url;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
-import se.ductus.temperaturesensor.model.Heating;
-import se.ductus.temperaturesensor.model.Temperature;
+import se.ductus.temperature.sensor.model.Heating;
+import se.ductus.temperature.sensor.model.Temperature;
 
 @Path("/temperature-sensor")
 @RegisterRestClient(configKey = "temperature-sensor")

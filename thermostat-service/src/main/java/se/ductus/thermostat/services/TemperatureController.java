@@ -4,7 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.ductus.temperaturesensor.model.Temperature;
+import se.ductus.temperature.sensor.model.Temperature;
 
 @ApplicationScoped
 public class TemperatureController {

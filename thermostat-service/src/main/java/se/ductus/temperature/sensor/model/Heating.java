@@ -1,4 +1,4 @@
-package se.ductus.temperaturesensor.model;
+package se.ductus.temperature.sensor.model;
 
 public class Heating {
     public boolean heating;

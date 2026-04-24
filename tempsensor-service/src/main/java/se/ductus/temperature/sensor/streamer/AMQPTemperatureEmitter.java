@@ -1,4 +1,4 @@
-package se.ductus.tempsensor.streamer;
+package se.ductus.temperature.sensor.streamer;
 
 import io.quarkus.arc.lookup.LookupUnlessProperty;
 import io.smallrye.reactive.messaging.rabbitmq.OutgoingRabbitMQMetadata;
@@ -10,7 +10,7 @@ import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.messaging.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import se.ductus.tempsensor.temperature.models.TemperatureSensorStateEvent;
+import se.ductus.temperature.sensor.temperature.models.TemperatureSensorStateEvent;
 
 @LookupUnlessProperty(name = "se.ductus.tempsensor.temperature-stream-interval", stringValue = "off")
 @ApplicationScoped

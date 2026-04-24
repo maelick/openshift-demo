@@ -3,8 +3,8 @@ package se.ductus.thermostat.services;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
-import se.ductus.temperaturesensor.model.Heating;
-import se.ductus.temperaturesensor.service.TemperatureSensorService;
+import se.ductus.temperature.sensor.model.Heating;
+import se.ductus.temperature.sensor.service.TemperatureSensorService;
 
 @ApplicationScoped
 public class HTTPHeatingService implements HeatingService {

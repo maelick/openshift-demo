@@ -1,4 +1,4 @@
-package se.ductus.tempsensor.api;
+package se.ductus.temperature.sensor.api;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
@@ -7,9 +7,9 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
-import se.ductus.tempsensor.api.models.HeatingRequest;
-import se.ductus.tempsensor.api.models.TemperatureResponse;
-import se.ductus.tempsensor.temperature.TemperatureService;
+import se.ductus.temperature.sensor.api.models.HeatingRequest;
+import se.ductus.temperature.sensor.api.models.TemperatureResponse;
+import se.ductus.temperature.sensor.temperature.TemperatureService;
 
 @Path("/temperature-sensor")
 @Produces(MediaType.APPLICATION_JSON)
