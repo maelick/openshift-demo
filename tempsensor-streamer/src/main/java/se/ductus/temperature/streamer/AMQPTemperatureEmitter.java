@@ -11,7 +11,7 @@ import org.eclipse.microprofile.reactive.messaging.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@LookupUnlessProperty(name = "se.ductus.tempsensor.temperature-stream-interval", stringValue = "off")
+@LookupUnlessProperty(name = "se.ductus.temperature.streamer.temperature-stream-interval", stringValue = "off")
 @ApplicationScoped
 public class AMQPTemperatureEmitter implements TemperatureEmitter {
     private static final Logger log = LoggerFactory.getLogger(AMQPTemperatureEmitter.class);
