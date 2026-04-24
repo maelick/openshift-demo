@@ -13,6 +13,11 @@ services:
       TZ: Europe/Stockholm
     volumes:
       - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: mysqladmin ping -h localhost  -u $$MYSQL_USER -p$$MYSQL_PASSWORD
+      interval: 1s
+      timeout: 20s
+      retries: 30
 
   thermostat:
     container_name: thermostat
@@ -29,6 +34,14 @@ services:
       MYSQL_PASSWORD: Thermostat1!
       TEMPERATURE_SENSORS: "temperature-sensor-spring-1,temperature-sensor-spring-2,temperature-sensor-1"
       DEFAULT_TEMPERATURE_SENSOR: temperature-sensor-spring-1
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080/q/health" ]
+      interval: 1s
+      timeout: 10s
+      retries: 60
+    depends_on:
+      mysql:
+        condition: service_healthy
 
   temperature-sensor-spring-1:
     container_name: temperature-sensor-spring-1
