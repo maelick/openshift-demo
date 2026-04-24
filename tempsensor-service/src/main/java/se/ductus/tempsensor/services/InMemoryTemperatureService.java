@@ -9,6 +9,8 @@ import se.ductus.tempsensor.services.models.TemperatureSensorStateEvent;
 
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -16,6 +18,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 public class InMemoryTemperatureService implements TemperatureService {
     private static final Logger log = LoggerFactory.getLogger(InMemoryTemperatureService.class);
 
+    private final String sensorId;
     private final float increment;
     private final float decrement;
     private final float minTemperature;
@@ -27,7 +30,13 @@ public class InMemoryTemperatureService implements TemperatureService {
 
     @Inject
     public InMemoryTemperatureService(TemperatureServiceConfig config) {
-        this(config.increment(), config.decrement(), config.minimum(), config.maximum());
+        this(
+                config.sensorId(),
+                config.increment(),
+                config.decrement(),
+                config.minimum(),
+                config.maximum()
+        );
 
         if (config.randomInitialValue()) {
             this.currentTemperature = this.randomTemperature();
@@ -36,16 +45,17 @@ public class InMemoryTemperatureService implements TemperatureService {
         }
     }
 
-    public InMemoryTemperatureService(float increment, float decrement, float minTemperature, float maxTemperature, float initialValue) {
-        this(increment, decrement, minTemperature, maxTemperature);
+    public InMemoryTemperatureService(Optional<String> sensorId, float increment, float decrement, float minTemperature, float maxTemperature, float initialValue) {
+        this(sensorId, increment, decrement, minTemperature, maxTemperature);
         this.currentTemperature = initialValue;
     }
 
-    public InMemoryTemperatureService(float increment, float decrement, float minTemperature, float maxTemperature) {
+    public InMemoryTemperatureService(Optional<String> sensorId, float increment, float decrement, float minTemperature, float maxTemperature) {
         if (minTemperature >= maxTemperature) {
             throw new IllegalArgumentException("Minimum temperature must be less than maximum");
         }
 
+        this.sensorId = sensorId.orElse(randomSensorId());
         this.increment = increment;
         this.decrement = decrement;
         this.minTemperature = minTemperature;
@@ -70,7 +80,7 @@ public class InMemoryTemperatureService implements TemperatureService {
         try {
             var now = LocalDateTime.now();
             return new TemperatureSensorStateEvent(
-                    "id-todo",
+                    this.sensorId,
                     this.currentTemperature,
                     this.heating,
                     now.toInstant(ZoneOffset.UTC)
@@ -102,6 +112,7 @@ public class InMemoryTemperatureService implements TemperatureService {
                 this.currentTemperature = Math.max(this.currentTemperature - this.decrement, this.minTemperature);
             }
             log.atInfo()
+                    .addKeyValue("sensorId", this.sensorId)
                     .addKeyValue("celsius", this.currentTemperature)
                     .log("Temperature updated");
         } finally {
@@ -111,5 +122,9 @@ public class InMemoryTemperatureService implements TemperatureService {
 
     private float randomTemperature() {
         return this.minTemperature + (float) (Math.random() * (this.maxTemperature - this.minTemperature));
+    }
+
+    private static String randomSensorId() {
+        return "temperature-sensor-" + UUID.randomUUID();
     }
 }
